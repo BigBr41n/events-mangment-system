@@ -1,0 +1,19 @@
+services:
+  events_app:
+    build: .
+    ports:
+      - 3222:3222
+    volumes:
+      - .:/usr/src/app/src
+    command: pnpm run start:dev
+    environment:
+      - NODE_ENV=development
+
+  postgres_db:
+    image: postgres
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=nestjs_db
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testuser123
