@@ -1,4 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
+import { User } from './User.entity';
+import { Rsvp } from './Rsvp.entity';
+import { Feedback } from './Feedback.entity';
+import { Notification } from './Notification.Entity';
 
 @Entity('events')
 @Index('IDX_EVENTS_ORGANIZER_ID', ['organizerId'])
@@ -32,4 +45,16 @@ export class Event {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => User, (user) => user.events)
+  organizer: User;
+
+  @OneToMany(() => Rsvp, (rsvp) => rsvp.event)
+  rsvps: Rsvp[];
+
+  @OneToMany(() => Feedback, (feedback) => feedback.event)
+  feedbacks: Feedback[];
+
+  @OneToMany(() => Notification, (notification) => notification.event)
+  notifications: Notification[];
 }

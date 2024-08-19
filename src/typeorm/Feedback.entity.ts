@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
 } from 'typeorm';
+import { User } from './User.entity';
+import { Event } from './Event.entity';
 
 @Entity('feedback')
 @Index('IDX_FEEDBACK_EVENT_ID', ['eventId'])
@@ -31,4 +34,10 @@ export class Feedback {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Event, (event) => event.feedbacks)
+  event: Event;
+
+  @ManyToOne(() => User, (user) => user.feedbacks)
+  user: User;
 }

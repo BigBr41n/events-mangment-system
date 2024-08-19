@@ -5,7 +5,10 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  ManyToOne,
 } from 'typeorm';
+import { User } from './User.entity';
+import { Event } from './Event.entity';
 
 @Entity('rsvps')
 @Index('IDX_RSVPS_EVENT_ID', ['eventId'])
@@ -28,4 +31,10 @@ export class Rsvp {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @ManyToOne(() => Event, (event) => event.rsvps)
+  event: Event;
+
+  @ManyToOne(() => User, (user) => user.rsvps)
+  user: User;
 }

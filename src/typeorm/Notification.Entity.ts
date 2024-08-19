@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn, Index } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  Index,
+  ManyToOne,
+} from 'typeorm';
+import { User } from './User.entity';
+import { Event } from './Event.entity';
 
 @Entity('notifications')
 @Index('IDX_NOTIFICATIONS_USER_ID', ['userId'])
@@ -21,4 +29,10 @@ export class Notification {
 
   @Column({ type: 'timestamp' })
   sentAt: Date;
+
+  @ManyToOne(() => User, (user) => user.notifications)
+  user: User;
+
+  @ManyToOne(() => Event, (event) => event.notifications)
+  event: Event;
 }
