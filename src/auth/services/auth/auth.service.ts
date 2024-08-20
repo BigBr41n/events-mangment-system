@@ -61,10 +61,7 @@ export class AuthService {
     this.userRepository.save(user);
 
     //creating access token
-    const access_token = this.jwtService.sign(payload, {
-      secret: process.env.JWT_SECRET,
-      expiresIn: '5h',
-    });
+    const access_token = this.jwtService.sign(payload);
 
     //return the tokens
     return {
