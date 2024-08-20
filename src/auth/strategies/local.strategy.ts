@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { AuthService } from '../services/auth/auth.service'; // Ensure this path matches your project structure
-import { User } from 'src/typeorm/User.entity'; // Ensure this path matches your project structure
+import { User } from '../../typeorm/User.entity'; // Ensure this path matches your project structure
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

@@ -3,18 +3,19 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { User } from 'src/typeorm/User.entity';
+import { User } from '../../../typeorm/User.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Token } from 'src/auth/types/Token.type';
-import { UserData } from 'src/auth/types/UserData.type';
-import { Credentials } from 'src/auth/types/credentials.type';
-import { JwtPayload } from 'src/auth/types/jwt-payload.type';
+import { Token } from '../../types/Token.type';
+import { UserData } from '../../types/UserData.type';
+import { Credentials } from '../../types/credentials.type';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly jwtService: JwtService,
   ) {}
