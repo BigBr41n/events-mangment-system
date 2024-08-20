@@ -30,6 +30,9 @@ export class User {
   @Column({ type: 'enum', enum: ['Admin', 'Organizer', 'Attendee'] })
   role: 'Admin' | 'Organizer' | 'Attendee';
 
+  @Column({ nullable: true })
+  refreshToken: string;
+
   @CreateDateColumn()
   createdAt: Date;
 
