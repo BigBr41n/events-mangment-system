@@ -1,7 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
+import { User } from './typeorm/User.entity';
+import { Event } from './typeorm/Event.entity';
+import { Feedback } from './typeorm/Feedback.entity';
+import { Notification } from './typeorm/Notification.Entity';
+import { Rsvp } from './typeorm/Rsvp.entity';
 
 @Module({
   imports: [
@@ -24,12 +30,13 @@ import * as Joi from 'joi';
       useFactory: async (configService: ConfigService) => ({
         type: 'postgres',
         url: configService.get<string>('DATABASE_URL'),
-        autoLoadEntities: true,
+        entities: [User, Event, Feedback, Notification, Rsvp],
         synchronize: true,
         logging: process.env.NODE_ENV === 'development',
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [],
   providers: [],
