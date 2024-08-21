@@ -102,10 +102,11 @@ export class AuthService {
     return restUserInfo;
   }
 
-  async refreshTOken(payload: JwtPayload): Promise<string> {
-    return this.jwtService.sign(payload, {
+  async refreshTOken(payload: JwtPayload): Promise<{ accessToken: string }> {
+    const newAccessToken = await this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '5h',
     });
+    return { accessToken: newAccessToken };
   }
 }

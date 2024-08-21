@@ -33,10 +33,12 @@ export class AuthController {
   ): Promise<Partial<User>> {
     return this.authService.register(registerUserDto);
   }
-  @Post()
+  @Post('refresh')
   @HttpCode(HttpStatus.OK)
   @UseGuards(RefreshAuthGuard)
-  async refreshToken(@Request() req: FastifyRequest): Promise<string> {
+  async refreshToken(
+    @Request() req: FastifyRequest,
+  ): Promise<{ accessToken: string }> {
     return this.authService.refreshTOken(req.user);
   }
 }
