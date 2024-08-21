@@ -7,8 +7,6 @@ import {
   Body,
   UseGuards,
   Request,
-  ForbiddenException,
-  ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from '../service/users.service';
 import { UpdateUserDto } from '../dtos/UpdateUser.dto';
@@ -19,36 +17,25 @@ import { JwtAuthGuard } from '../../auth/guards/JwtAuthGuard.guard';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':userId')
+  @Get()
   @UseGuards(JwtAuthGuard)
-  getUser(@Param('userId') userId: string) {
-    return this.userService.getUserById(userId);
+  getUser(@Request() req: FastifyRequest) {
+    //only the user can access his account info
+    return this.userService.getUserById(req.user.sub);
   }
 
-  @Put(':userId')
+  @Put()
   @UseGuards(JwtAuthGuard)
   updateUser(
-    @Param('userId', new ParseUUIDPipe()) userId: string,
     @Request() req: FastifyRequest,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    //only the user can update his info
-    if (req.user.id !== userId) {
-      throw new ForbiddenException('Unauthorized to update this user');
-    }
-    return this.userService.updateUser(userId, updateUserDto);
+    return this.userService.updateUser(req.user.sub, updateUserDto);
   }
 
-  @Delete(':userId')
+  @Delete()
   @UseGuards(JwtAuthGuard)
-  deleteUser(
-    @Param('userId', new ParseUUIDPipe()) userId: string,
-    @Request() req: FastifyRequest,
-  ) {
-    //only the user can delete his info
-    if (req.user.sub !== userId) {
-      throw new ForbiddenException('Unauthorized to delete this user');
-    }
-    return this.userService.deleteUser(userId);
+  deleteUser(@Request() req: FastifyRequest) {
+    return this.userService.deleteUser(req.user.sub);
   }
 }

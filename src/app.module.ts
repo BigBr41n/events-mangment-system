@@ -8,6 +8,7 @@ import { Event } from './typeorm/Event.entity';
 import { Feedback } from './typeorm/Feedback.entity';
 import { Notification } from './typeorm/Notification.Entity';
 import { Rsvp } from './typeorm/Rsvp.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { Rsvp } from './typeorm/Rsvp.entity';
       inject: [ConfigService],
     }),
     AuthModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
