@@ -10,7 +10,7 @@ import { RefreshTokenBody } from '../types/RefreshTokenBody.type';
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
-  'refresh-token',
+  'jwt-refresh',
 ) {
   constructor(private readonly authService: AuthService) {
     super({
@@ -41,6 +41,9 @@ export class RefreshTokenStrategy extends PassportStrategy(
       throw new UnauthorizedException('Invalid refresh token');
     }
 
-    return payload;
+    const { exp, ...payloadWithoutExp } = payload as JwtPayload & {
+      exp: number;
+    };
+    return payloadWithoutExp;
   }
 }
