@@ -18,4 +18,8 @@ export class CreateUserDto {
   @IsString()
   @IsStrongPassword()
   password: string;
+
+  @IsNotEmpty()
+  @IsString({ each: true })
+  role: 'Organizer' | 'Attendee';
 }

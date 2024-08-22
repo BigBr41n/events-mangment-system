@@ -30,7 +30,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async register(
     @Body() registerUserDto: CreateUserDto,
-  ): Promise<Partial<User>> {
+  ): Promise<Partial<User> | { message: string }> {
     return this.authService.register(registerUserDto);
   }
   @Post('refresh')

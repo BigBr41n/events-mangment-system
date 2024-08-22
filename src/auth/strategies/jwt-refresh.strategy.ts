@@ -4,7 +4,6 @@ import { Strategy, ExtractJwt } from 'passport-jwt';
 import { FastifyRequest } from 'fastify';
 import { AuthService } from '../services/auth/auth.service';
 import { JwtPayload } from '../types/jwt-payload.type';
-import { User } from '../../typeorm/User.entity';
 import { RefreshTokenBody } from '../types/RefreshTokenBody.type';
 
 @Injectable()
