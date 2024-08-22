@@ -9,14 +9,17 @@ import {
   UseGuards,
   Request,
   ParseUUIDPipe,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { EventService } from '../services/events.service';
 import { CreateEventDto } from '../dtos/CreateEvent.dto';
 import { UpdateEventDto } from '../dtos/UpdateEvent.dto';
 import { Event } from '../../typeorm/Event.entity';
 import { JwtAuthGuard } from '../../auth/guards/JwtAuthGuard.guard';
-import { OrganizerGuard } from '../../common/guards/Orgnizer.guard';
+import { RoleGuard } from '../../common/guards/Role.guard';
 import { FastifyRequest } from 'fastify';
+import { Role } from '../../common/decorators/role.decorator';
 
 @Controller('api/v1/events')
 export class EventsController {
@@ -24,7 +27,9 @@ export class EventsController {
 
   // POST /api/v1/events
   @Post()
-  @UseGuards(JwtAuthGuard, OrganizerGuard)
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Role('Organizer', 'Admin')
   async createEvent(
     @Body() createEventDto: CreateEventDto,
     @Request() req: FastifyRequest,
@@ -34,19 +39,23 @@ export class EventsController {
 
   // GET /api/v1/events
   @Get()
+  @HttpCode(HttpStatus.OK)
   async getAllEvents(): Promise<Event[]> {
     return this.eventService.findAll();
   }
 
   // GET /api/v1/events/:eventId
   @Get(':eventId')
+  @HttpCode(HttpStatus.OK)
   async getEventById(@Param('eventId') eventId: string): Promise<Event> {
     return this.eventService.findOne(eventId);
   }
 
   // PUT /api/v1/events/:eventId
   @Put(':eventId')
-  @UseGuards(JwtAuthGuard, OrganizerGuard)
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Role('Organizer', 'Admin')
   async updateEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -56,7 +65,9 @@ export class EventsController {
 
   // DELETE /api/v1/events/:eventId
   @Delete(':eventId')
-  @UseGuards(JwtAuthGuard, OrganizerGuard)
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard, RoleGuard)
+  @Role('Organizer', 'Admin')
   async deleteEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
   ): Promise<void> {
