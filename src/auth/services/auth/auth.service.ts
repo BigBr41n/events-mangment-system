@@ -88,25 +88,35 @@ export class AuthService {
     //hash the password
     const hashedPassword = await bcrypt.hash(userData.password, 12);
 
+    //check the role :
+    //if the user is an events organizer, he should be pending the an admin approve him
+    const status = userData.role === 'Organizer' ? 'pending' : 'approved';
+
     //remove password from userData object
     const { password, ...user } = userData;
 
     //create the user
     const newUser = this.userRepository.create({
       ...user,
+      status,
       passwordHash: hashedPassword,
       role: 'Attendee',
     });
     await this.userRepository.save(newUser);
     const { passwordHash, ...restUserInfo } = newUser;
+
+    //if the user is Organizer, then:
+    if (userData.role === 'Organizer')
+      return {
+        message: 'Account Created Successfully, please wait to be approved',
+      };
+
+    //else :
     return restUserInfo;
   }
 
   async refreshTOken(payload: JwtPayload): Promise<{ accessToken: string }> {
-    const newAccessToken = await this.jwtService.sign(payload, {
-      secret: process.env.JWT_REFRESH_SECRET,
-      expiresIn: '5h',
-    });
+    const newAccessToken = await this.jwtService.sign(payload);
     return { accessToken: newAccessToken };
   }
 }
