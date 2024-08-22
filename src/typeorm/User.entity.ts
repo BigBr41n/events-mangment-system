@@ -30,6 +30,9 @@ export class User {
   @Column({ type: 'enum', enum: ['Admin', 'Organizer', 'Attendee'] })
   role: 'Admin' | 'Organizer' | 'Attendee';
 
+  @Column({ type: 'enum', enum: ['pending', 'approved'], default: 'pending' })
+  status: 'pending' | 'approved';
+
   @Column({ nullable: true })
   refreshToken: string;
 
