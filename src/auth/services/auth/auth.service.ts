@@ -100,7 +100,6 @@ export class AuthService {
       ...user,
       status,
       passwordHash: hashedPassword,
-      role: 'Attendee',
     });
     await this.userRepository.save(newUser);
     const { passwordHash, ...restUserInfo } = newUser;
