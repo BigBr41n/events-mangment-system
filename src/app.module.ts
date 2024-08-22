@@ -9,6 +9,7 @@ import { Feedback } from './typeorm/Feedback.entity';
 import { Notification } from './typeorm/Notification.Entity';
 import { Rsvp } from './typeorm/Rsvp.entity';
 import { UsersModule } from './users/users.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UsersModule } from './users/users.module';
     }),
     AuthModule,
     UsersModule,
+    EventsModule,
   ],
   controllers: [],
   providers: [],
