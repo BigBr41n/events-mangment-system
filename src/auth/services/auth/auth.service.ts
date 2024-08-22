@@ -50,7 +50,7 @@ export class AuthService {
 
   async login(user: User): Promise<Token> {
     //the payload to sign:
-    const payload = { username: user.username, sub: user.id };
+    const payload = { username: user.username, role: user.role, sub: user.id };
     const refresh_token = this.jwtService.sign(payload, {
       secret: process.env.JWT_REFRESH_SECRET,
       expiresIn: '7d',
