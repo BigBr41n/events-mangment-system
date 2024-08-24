@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { Event } from '../../typeorm/Event.entity';
 import { CreateEventDto } from '../dtos/CreateEvent.dto';
 import { UpdateEventDto } from '../dtos/UpdateEvent.dto';
+import { EventsGateway } from '../socket/events.gateway';
 
 @Injectable()
 export class EventService {
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    private readonly eventsGateway: EventsGateway,
   ) {}
 
   // Create a new event
@@ -48,6 +50,11 @@ export class EventService {
     const event = await this.findOne(eventId);
 
     const updatedEvent = this.eventRepository.merge(event, updateEventDto);
+
+    //after updating the event , emit it to the socket
+    this.eventsGateway.sendEventUpdate(event.id, updatedEvent);
+
+    //return to the client
     return this.eventRepository.save(updatedEvent);
   }
 
