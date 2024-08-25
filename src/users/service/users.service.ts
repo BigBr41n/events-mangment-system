@@ -36,6 +36,10 @@ export class UserService {
     //fetch the user
     const user = await this.getUserById(userId);
 
+    //if user not found:
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     //update the user's information with the provided data
     Object.assign(user, updateUserDto);
 
@@ -47,6 +51,11 @@ export class UserService {
   async deleteUser(userId: string): Promise<void> {
     //fetch the user
     const user = await this.getUserById(userId);
+
+    //if user not found:
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
 
     //delete the user from the database
     await this.userRepository.remove(user);
