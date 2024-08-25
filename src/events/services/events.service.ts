@@ -5,13 +5,18 @@ import { Event } from '../../typeorm/Event.entity';
 import { CreateEventDto } from '../dtos/CreateEvent.dto';
 import { UpdateEventDto } from '../dtos/UpdateEvent.dto';
 import { EventsGateway } from '../socket/events.gateway';
+import { NotificationsGateway } from '../../notifications/gateway/notifications.gateway';
+import { Rsvp } from '../../typeorm/Rsvp.entity';
 
 @Injectable()
 export class EventService {
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    @InjectRepository(Rsvp)
+    private readonly rsvpRepository: Repository<Rsvp>,
     private readonly eventsGateway: EventsGateway,
+    private readonly notificationsGateway: NotificationsGateway,
   ) {}
 
   // Create a new event
@@ -23,7 +28,37 @@ export class EventService {
       ...createEventDto,
       organizerId,
     });
-    return this.eventRepository.save(event);
+
+    const savedEvent = await this.eventRepository.save(event);
+
+    void this.sendEventTypeNotification(event.category);
+
+    return this.eventRepository.save(savedEvent);
+  }
+
+  // sendEventTypeNotification based on the category
+  private async sendEventTypeNotification(category: Event['category']) {
+    try {
+      const rsvps = await this.rsvpRepository.find({
+        relations: ['user'],
+        where: { event: { category } },
+        select: {
+          user: { id: true },
+          event: { id: true, category: true },
+        },
+      });
+
+      rsvps.forEach((rsvp) => {
+        this.notificationsGateway.sendNotification(
+          rsvp.user.id,
+          'New Event Alert',
+          `You have a new event to in the ${rsvp.event.category} category`,
+          'Reminder',
+        );
+      });
+    } catch (error) {
+      console.error('Error sending event type notification:', error);
+    }
   }
 
   // Get all events
@@ -53,6 +88,21 @@ export class EventService {
 
     //after updating the event , emit it to the socket
     this.eventsGateway.sendEventUpdate(event.id, updatedEvent);
+
+    //notify the users that already joined the event
+    const joinedUsers = await this.rsvpRepository.find({
+      where: { eventId: event.id, status: 'Confirmed' },
+    });
+
+    //send the notifications
+    joinedUsers.forEach((user) => {
+      this.notificationsGateway.sendNotification(
+        user.userId,
+        event.id,
+        `Event ${event.title} has been updated`,
+        'Update',
+      );
+    });
 
     //return to the client
     return this.eventRepository.save(updatedEvent);

@@ -25,6 +25,18 @@ export class CreateEventDto {
   location: string;
 
   @IsNotEmpty()
+  @IsString()
+  category:
+    | 'Tech'
+    | 'Culture'
+    | 'Art'
+    | 'Business'
+    | 'Education'
+    | 'Sports'
+    | 'Music'
+    | 'Health';
+
+  @IsNotEmpty()
   @IsInt()
   capacity: number;
 }
