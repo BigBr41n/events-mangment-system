@@ -30,6 +30,9 @@ export class Notification {
   @Column({ type: 'timestamp' })
   sentAt: Date;
 
+  @Column({ type: 'boolean', default: false })
+  isRead: boolean;
+
   @ManyToOne(() => User, (user) => user.notifications)
   user: User;
 

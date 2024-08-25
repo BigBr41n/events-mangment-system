@@ -40,6 +40,29 @@ export class Event {
   @Column({ type: 'uuid' })
   organizerId: string;
 
+  @Column({
+    type: 'enum',
+    enum: [
+      'Tech',
+      'Culture',
+      'Art',
+      'Business',
+      'Education',
+      'Sports',
+      'Music',
+      'Health',
+    ],
+  })
+  category:
+    | 'Tech'
+    | 'Culture'
+    | 'Art'
+    | 'Business'
+    | 'Education'
+    | 'Sports'
+    | 'Music'
+    | 'Health';
+
   @CreateDateColumn()
   createdAt: Date;
 
