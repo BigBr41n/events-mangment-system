@@ -61,6 +61,14 @@ $ pnpm run test
 
    - **Event Management**: Admins can view, manage, and approve events.
    - **User Management**: Admins can manage user accounts and roles.
+   -
+
+6. **Notifications and Reminders**
+
+   - **Push Notifications**: Optionally, implement push notifications for real-time updates.
+
+7. **Real-Time Updates**
+   - **Real-Time Event Updates**: Use Web-sockets technology to provide real-time updates on event changes and RSVPs.
 
 #### **Technical Considerations**
 
@@ -71,3 +79,11 @@ $ pnpm run test
    - **RSVP Table**: For storing RSVPs and attendance data.
    - **Feedback Table**: For storing event feedback and ratings.
    - **Notification Table**: For storing Notifications
+
+2. **Authentication**
+
+   - Implement JWT or OAuth for secure user authentication and authorization.
+
+3. **Real-Time Features**
+
+   - Use WebSockets or a library like Socket.IO for real-time updates.
