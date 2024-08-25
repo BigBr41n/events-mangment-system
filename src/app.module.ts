@@ -13,6 +13,7 @@ import { EventsModule } from './events/events.module';
 import { AdminModule } from './admin/admin.module';
 import { RsvpModule } from './rsvp/rsvp.module';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { FeedbacksModule } from './feedbacks/feedbacks.module';
     AdminModule,
     RsvpModule,
     FeedbacksModule,
+    NotificationsModule,
   ],
   controllers: [],
   providers: [],
