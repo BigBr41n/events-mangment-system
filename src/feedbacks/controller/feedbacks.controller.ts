@@ -18,7 +18,15 @@ import { UpdateFeedbackDto } from '../dtos/UpdateFeedback.dto';
 import { Feedback } from '../../typeorm/Feedback.entity';
 import { JwtAuthGuard } from '../../auth/guards/JwtAuthGuard.guard';
 import { FastifyRequest } from 'fastify';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('Feedbacks')
 @Controller('api/v1/feedbacks')
 export class FeedbacksController {
   constructor(private readonly feedbacksService: FeedbacksService) {}
@@ -26,6 +34,13 @@ export class FeedbacksController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Create a new feedback' })
+  @ApiResponse({
+    status: 201,
+    description: 'Feedback created successfully.',
+    type: Feedback,
+  })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
   async createFeedback(
     @Param('eventId') eventId: string,
     @Body() createFeedbackDto: CreateFeedbackDto,
@@ -40,6 +55,13 @@ export class FeedbacksController {
 
   @Get(':eventId')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all feedback for a specific event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successfully retrieved feedback.',
+    type: [Feedback],
+  })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
   async findAllFeedbacksForEvent(
     @Param('eventId') eventId: string,
   ): Promise<Feedback[]> {
@@ -48,6 +70,9 @@ export class FeedbacksController {
 
   @Delete(':eventId/:feedbackId')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete a feedback for a specific event' })
+  @ApiResponse({ status: 204, description: 'Feedback deleted successfully.' })
+  @ApiResponse({ status: 404, description: 'Feedback not found.' })
   async deleteFeedback(
     @Param('eventId') eventId: string,
     @Param('feedbackId') feedbackId: string,
@@ -58,12 +83,18 @@ export class FeedbacksController {
   @Put(':feedbackId')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Update a feedback for a specific event' })
+  @ApiResponse({
+    status: 200,
+    description: 'Feedback updated successfully.',
+    type: Feedback,
+  })
+  @ApiResponse({ status: 404, description: 'Feedback not found.' })
   async updateFeedback(
     @Param('eventId') eventId: string,
     @Param('feedbackId') feedbackId: string,
     @Body() updateFeedbackDto: UpdateFeedbackDto,
   ): Promise<Feedback> {
-    // Validate if the event exists before updating feedback
     const feedbacks =
       await this.feedbacksService.findAllFeedbacksForEvent(eventId);
     if (!feedbacks.some((feedback) => feedback.id === feedbackId)) {

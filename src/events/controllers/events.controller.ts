@@ -20,16 +20,31 @@ import { JwtAuthGuard } from '../../auth/guards/JwtAuthGuard.guard';
 import { RoleGuard } from '../../common/guards/Role.guard';
 import { FastifyRequest } from 'fastify';
 import { Role } from '../../common/decorators/role.decorator';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiBearerAuth()
+@ApiTags('events')
 @Controller('api/v1/events')
 export class EventsController {
   constructor(private readonly eventService: EventService) {}
 
-  // POST /api/v1/events
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Role('Organizer', 'Admin')
+  @ApiOperation({ summary: 'Create a new event' })
+  @ApiCreatedResponse({
+    description: 'The event has been successfully created.',
+    type: Event,
+  })
   async createEvent(
     @Body() createEventDto: CreateEventDto,
     @Request() req: FastifyRequest,
@@ -37,25 +52,39 @@ export class EventsController {
     return this.eventService.create(req.user.sub, createEventDto);
   }
 
-  // GET /api/v1/events
   @Get()
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get all events' })
+  @ApiOkResponse({
+    description: 'Successfully retrieved all events.',
+    type: [Event],
+  })
   async getAllEvents(): Promise<Event[]> {
     return this.eventService.findAll();
   }
 
-  // GET /api/v1/events/:eventId
   @Get(':eventId')
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Get a single event by ID' })
+  @ApiOkResponse({
+    description: 'Successfully retrieved the event.',
+    type: Event,
+  })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
   async getEventById(@Param('eventId') eventId: string): Promise<Event> {
     return this.eventService.findOne(eventId);
   }
 
-  // PUT /api/v1/events/:eventId
   @Put(':eventId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Role('Organizer', 'Admin')
+  @ApiOperation({ summary: 'Update an existing event' })
+  @ApiOkResponse({
+    description: 'Successfully updated the event.',
+    type: Event,
+  })
+  @ApiResponse({ status: 404, description: 'Event not found.' })
   async updateEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -63,11 +92,13 @@ export class EventsController {
     return this.eventService.update(eventId, updateEventDto);
   }
 
-  // DELETE /api/v1/events/:eventId
   @Delete(':eventId')
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(JwtAuthGuard, RoleGuard)
   @Role('Organizer', 'Admin')
+  @ApiOperation({ summary: 'Delete an event by ID' })
+  @ApiCreatedResponse({ description: 'Successfully deleted the event.' })
+  @ApiNotFoundResponse({ description: 'Event not found.' })
   async deleteEvent(
     @Param('eventId', ParseUUIDPipe) eventId: string,
   ): Promise<void> {

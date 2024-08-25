@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import {
   FastifyAdapter,
   NestFastifyApplication,
@@ -31,6 +32,22 @@ async function bootstrap() {
     }),
   );
 
+  //swagger
+  const options = new DocumentBuilder()
+    .setTitle('Events Management API')
+    .setDescription('API for managing events')
+    .setVersion('1.0')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+    })
+    .build();
+
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document);
+
+  //starting the server  (listen on port 3000)
   await app.listen(3000, '0.0.0.0');
 }
 bootstrap();

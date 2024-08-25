@@ -1,4 +1,5 @@
 import {
+  ConflictException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -85,6 +86,15 @@ export class AuthService {
 
   //creating a new user (registering a new user)
   async register(userData: UserData) {
+    // check if the user already exists
+    const userTest = await this.userRepository.findOne({
+      where: { email: userData.email, username: userData.username },
+    });
+
+    if (userTest) {
+      throw new ConflictException('User already exists');
+    }
+
     //hash the password
     const hashedPassword = await bcrypt.hash(userData.password, 12);
 
