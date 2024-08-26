@@ -87,3 +87,33 @@ $ pnpm run test
 3. **Real-Time Features**
 
    - Use WebSockets or a library like Socket.IO for real-time updates.
+
+### environment variables
+
+1. .env:
+
+   ```
+   POSTGRES_DB=your_db_name
+   POSTGRES_USER=your_db_user
+   POSTGRES_PASSWORD=your_db_pass
+   ```
+
+2. .env.production.local
+
+   ```
+   DATABASE_URL=postgresql://db_user:password@postgres_db:5432/db_name
+   NODE_ENV=production
+   PORT=port
+   JWT_REFRESH_SECRET=secret_pro
+   JWT_SECRET=secret
+
+   ```
+
+3. .env.development.local
+   ```
+   DATABASE_URL=postgresql://db_user:password@postgres_db:5432/db_name
+   NODE_ENV=production
+   PORT=port
+   JWT_REFRESH_SECRET=secret_pro
+   JWT_SECRET=secret
+   ```
