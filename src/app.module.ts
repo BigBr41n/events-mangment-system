@@ -14,6 +14,7 @@ import { AdminModule } from './admin/admin.module';
 import { RsvpModule } from './rsvp/rsvp.module';
 import { FeedbacksModule } from './feedbacks/feedbacks.module';
 import { NotificationsModule } from './notifications/notifications.module';
+import { LoggerModule } from './common/logger/logger.module';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { NotificationsModule } from './notifications/notifications.module';
       isGlobal: true,
       envFilePath:
         process.env.NODE_ENV === 'production'
-          ? '.env.production'
+          ? '.env.production.local'
           : '.env.development.local',
       validationSchema: Joi.object({
         NODE_ENV: Joi.string()
@@ -49,11 +50,9 @@ import { NotificationsModule } from './notifications/notifications.module';
     RsvpModule,
     FeedbacksModule,
     NotificationsModule,
+    LoggerModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {}
-
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
-console.log('NODE_ENV:', process.env.NODE_ENV);

@@ -9,6 +9,7 @@ import { AppModule } from './app.module';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { ResponseInterceptor } from './response/response.interceptor';
+import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestFastifyApplication>(
@@ -21,8 +22,10 @@ async function bootstrap() {
     origin: '*',
   });
 
-  app.useGlobalInterceptors(new ResponseInterceptor());
-  app.useGlobalFilters(new AllExceptionsFilter());
+  const logger = app.get(WINSTON_MODULE_NEST_PROVIDER);
+  app.useLogger(logger);
+  app.useGlobalInterceptors(new ResponseInterceptor(logger));
+  app.useGlobalFilters(new AllExceptionsFilter(logger));
 
   app.useGlobalPipes(
     new ValidationPipe({

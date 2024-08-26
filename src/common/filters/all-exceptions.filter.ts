@@ -3,13 +3,17 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
-  Logger,
+  Inject,
 } from '@nestjs/common';
 import { FastifyReply, FastifyRequest } from 'fastify';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
-  private readonly logger = new Logger(AllExceptionsFilter.name);
+  constructor(
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
@@ -30,14 +34,19 @@ export class AllExceptionsFilter implements ExceptionFilter {
     };
 
     // Log the error details
-    this.logger.error(
-      `HTTP Status: ${status} Error Message: ${
+    this.logger.error({
+      message: 'Exception occurred',
+      statusCode: status,
+      path: request.url,
+      method: request.method,
+      errorMessage:
         typeof errorResponse.message === 'string'
           ? errorResponse.message
-          : JSON.stringify(errorResponse.message)
-      }`,
-      exception instanceof Error ? exception.stack : JSON.stringify(exception),
-    );
+          : JSON.stringify(errorResponse.message),
+      stack: exception instanceof Error ? exception.stack : undefined,
+      exception:
+        exception instanceof Error ? undefined : JSON.stringify(exception),
+    });
 
     response.status(status).send(errorResponse);
   }
