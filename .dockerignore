@@ -5,3 +5,4 @@ test
 Dockerfile
 .prettierrc
 README.md
+dist
